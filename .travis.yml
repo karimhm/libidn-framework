@@ -8,10 +8,10 @@ install:
 
 script:
   - set -o pipefail
-  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (iOS)" -destination "'platform=iOS Simulator,name=iPhone 11,OS=13.4'" -sdk iphonesimulator build | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme libidnTests -destination "'platform=macOS,arch=x86_64'" -sdk macosx -arch x86_64 test | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme libidnTestsPods -destination "'platform=macOS,arch=x86_64'" -sdk macosx -arch x86_64 test | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (tvOS)" -destination "'platform=tvOS Simulator,name=Apple TV,OS=13.4'" -sdk appletvsimulator -arch x86_64 build | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (watchOS)" -destination "platform=watchos Simulator,name=Apple Watch Series 4 - 44mm,OS=6.2," -sdk watchos build | xcpretty -c
+  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (iOS)" -destination "platform=iOS Simulator,name=iPhone 11,OS=13.4" -sdk iphonesimulator build | xcpretty -c
+  - xcodebuild -workspace libidn.xcworkspace -scheme libidnTests -destination "platform=macOS,arch=x86_64" -sdk macosx -arch x86_64 test | xcpretty -c
+  - xcodebuild -workspace libidn.xcworkspace -scheme libidnTestsPods -destination "platform=macOS,arch=x86_64'" -sdk macosx -arch x86_64 test | xcpretty -c
+  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (tvOS)" -destination "platform=tvOS Simulator,name=Apple TV,OS=13.4" -sdk appletvsimulator -arch x86_64 build | xcpretty -c
+  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (watchOS)" -destination "platform=watchos Simulator,name=Apple Watch Series 4 - 44mm,OS=6.2" -sdk watchos build | xcpretty -c
   - swift build -c release
   - swift test -c release
