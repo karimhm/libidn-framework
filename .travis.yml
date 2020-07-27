@@ -10,7 +10,6 @@ jobs:
       # Test the project using Swift PM
         - swift test
 
-  include:
     - stage: Xcode Tests
       osx_image: xcode9.3
 
