@@ -1,17 +1,34 @@
 language: objective-c
-osx_image: xcode11.4
 
-install:
-  - cd Tests
-  - bundle install
-  - bundle exec pod install
+jobs:
+  include:
+    - stage: Swift PM
+      osx_image: xcode11.4
+      script:
+      # Build the project using Swift PM
+        - swift build
+      # Test the project using Swift PM
+        - swift test
 
-script:
-  - set -o pipefail
-  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (iOS)" -destination "platform=iOS Simulator,name=iPhone 11,OS=13.4" -sdk iphonesimulator build | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme libidnTests -destination "platform=macOS,arch=x86_64" -sdk macosx -arch x86_64 test | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme libidnTestsPods -destination "platform=macOS,arch=x86_64'" -sdk macosx -arch x86_64 test | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (tvOS)" -destination "platform=tvOS Simulator,name=Apple TV,OS=13.4" -sdk appletvsimulator -arch x86_64 build | xcpretty -c
-  - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (watchOS)" -destination "platform=watchos Simulator,name=Apple Watch Series 4 - 44mm,OS=6.2" -sdk watchos build | xcpretty -c
-  - swift build -c release
-  - swift test -c release
+  include:
+    - stage: Xcode Tests
+      osx_image: xcode9.3
+
+      before_install:
+        # Fix Travis  xcodebuild exited with 65 https://github.com/travis-ci/travis-ci/issues/6675#issuecomment-257964767
+        - export IOS_SIMULATOR_UDID=`instruments -s devices | grep -m 1 "iPhone 8 (11" | awk -F '[ ]' '{print $4}' | awk -F '[\[]' '{print $2}' | sed 's/.$//'`
+        - echo $IOS_SIMULATOR_UDID
+        - open -a "simulator" --args -CurrentDeviceUDID $IOS_SIMULATOR_UDID
+
+      install:
+        - cd Tests
+        - bundle install
+        - bundle exec pod install
+
+      script:
+        - set -o pipefail
+        - travis_retry xcodebuild -workspace libidn.xcworkspace -scheme "libidn (iOS)" -sdk iphonesimulator -destination "id=$IOS_SIMULATOR_UDID" build | xcpretty -c
+        - xcodebuild -workspace libidn.xcworkspace -scheme libidnTests -sdk macosx -arch x86_64 test | xcpretty -c
+        - xcodebuild -workspace libidn.xcworkspace -scheme libidnTestsPods -sdk macosx -arch x86_64 test | xcpretty -c
+        - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (tvOS)" -sdk appletvsimulator -arch x86_64 build | xcpretty -c
+        - xcodebuild -workspace libidn.xcworkspace -scheme "libidn (watchOS)" -sdk watchos build | xcpretty -c
